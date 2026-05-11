@@ -4,7 +4,8 @@
 let todoItemList = []; // 전체 할 일 항목을 담는 배열
 
 // localStorage에 사용할 키 이름 (상수)
-const STORAGE_KEY = "todoItemList";
+const STORAGE_KEY      = "todoItemList";
+const DARK_MODE_KEY    = "darkMode";       // 다크모드 설정 저장 키
 
 
 // =============================================
@@ -24,6 +25,48 @@ function loadTodoListFromStorage() {
 
   // 저장된 데이터가 있으면 JSON 파싱, 없으면 빈 배열 사용
   todoItemList = savedData ? JSON.parse(savedData) : [];
+}
+
+/** 현재 다크모드 활성 여부를 localStorage에 저장 */
+function saveDarkModeToStorage(isDarkMode) {
+  localStorage.setItem(DARK_MODE_KEY, isDarkMode);
+}
+
+/** localStorage에서 다크모드 설정을 불러와 화면에 적용 */
+function loadDarkModeFromStorage() {
+  const savedDarkMode = localStorage.getItem(DARK_MODE_KEY);
+
+  // 저장된 값이 "true"이면 다크모드 적용
+  if (savedDarkMode === "true") {
+    applyDarkMode();
+  } else {
+    applyLightMode();
+  }
+}
+
+/** <html> 요소에 dark 클래스를 추가하여 다크모드 활성화 */
+function applyDarkMode() {
+  document.documentElement.classList.add("dark");
+  document.getElementById("darkModeToggleBtn").textContent = "☀️"; // 버튼 아이콘: 해(라이트 전환 안내)
+}
+
+/** <html> 요소에서 dark 클래스를 제거하여 라이트모드 활성화 */
+function applyLightMode() {
+  document.documentElement.classList.remove("dark");
+  document.getElementById("darkModeToggleBtn").textContent = "🌙"; // 버튼 아이콘: 달(다크 전환 안내)
+}
+
+/** 현재 모드를 확인하여 다크/라이트를 전환하는 함수 */
+function toggleDarkMode() {
+  const isDarkModeActive = document.documentElement.classList.contains("dark");
+
+  if (isDarkModeActive) {
+    applyLightMode();
+    saveDarkModeToStorage(false);
+  } else {
+    applyDarkMode();
+    saveDarkModeToStorage(true);
+  }
 }
 
 
@@ -98,10 +141,12 @@ function hideEmptyMessage() {
 function createTodoListItem(todoItem) {
   const listItemElement = document.createElement("li");
   listItemElement.className =
-    "todo-item flex items-center gap-3 border border-gray-100 rounded-lg px-3 py-2 transition";
+    "todo-item flex items-center gap-3 border border-gray-100 dark:border-gray-700 rounded-lg px-3 py-2 transition";
 
-  // 완료 여부에 따라 텍스트 스타일 클래스 결정
-  const textStyleClass = todoItem.done ? "todo-done" : "text-gray-700";
+  // 완료 여부에 따라 텍스트 스타일 클래스 결정 (라이트/다크 모두 적용)
+  const textStyleClass = todoItem.done
+    ? "todo-done"
+    : "text-gray-700 dark:text-gray-200";
 
   listItemElement.innerHTML = `
     <input
@@ -114,7 +159,7 @@ function createTodoListItem(todoItem) {
     </span>
     <button
       onclick="deleteTodo(${todoItem.id})"
-      class="text-red-400 hover:text-red-600 text-base transition"
+      class="text-red-400 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 text-base transition"
       title="삭제"
     >
       🗑
@@ -269,5 +314,6 @@ getTodoInputElement().addEventListener("keydown", function (keyboardEvent) {
 // =============================================
 // 🚀 앱 초기 실행: localStorage에서 데이터 불러온 뒤 화면 렌더링
 // =============================================
+loadDarkModeFromStorage(); // 저장된 다크모드 설정 불러오기
 loadTodoListFromStorage(); // 저장된 할 일 목록 불러오기
 renderTodos();             // 화면에 출력

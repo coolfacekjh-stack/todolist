@@ -6,14 +6,28 @@
   <title>My Todo List</title>
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind 다크모드: class 전략 설정 -->
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-gray-100 min-h-screen flex items-start justify-center pt-16">
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex items-start justify-center pt-16 transition-colors duration-300">
 
-  <div class="bg-white w-full max-w-md rounded-2xl shadow-lg p-6 flex flex-col gap-5">
+  <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl shadow-lg p-6 flex flex-col gap-5 transition-colors duration-300">
 
-    <!-- 제목 -->
-    <h1 class="text-2xl font-bold text-center text-blue-600">📝 My Todo List</h1>
+    <!-- 제목 + 다크모드 토글 버튼 -->
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">📝 My Todo List</h1>
+      <button
+        id="darkModeToggleBtn"
+        onclick="toggleDarkMode()"
+        class="text-xl p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        title="다크모드 전환"
+      >
+        🌙
+      </button>
+    </div>
 
     <!-- 입력 영역 -->
     <div class="flex gap-2">
@@ -21,11 +35,16 @@
         id="todoInput"
         type="text"
         placeholder="할 일을 입력하세요..."
-        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        class="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm
+               bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100
+               placeholder-gray-400 dark:placeholder-gray-500
+               focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500
+               transition-colors duration-300"
       />
       <button
         onclick="addTodo()"
-        class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+        class="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700
+               text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
       >
         + 추가
       </button>
@@ -37,42 +56,42 @@
     </ul>
 
     <!-- 빈 목록 안내 -->
-    <p id="emptyMsg" class="text-center text-gray-400 text-sm hidden">
+    <p id="emptyMsg" class="text-center text-gray-400 dark:text-gray-500 text-sm hidden">
       아직 할 일이 없습니다. 위에서 추가해 보세요! 🙂
     </p>
 
     <!-- 구분선 -->
-    <hr class="border-gray-200" />
+    <hr class="border-gray-200 dark:border-gray-600" />
 
     <!-- 상태 요약 영역 -->
     <div id="statusSummary" class="flex flex-col gap-2">
-      <p class="text-sm font-semibold text-gray-600">📊 상태 요약</p>
+      <p class="text-sm font-semibold text-gray-600 dark:text-gray-300">📊 상태 요약</p>
 
       <!-- 카운트 -->
       <div class="flex justify-around text-center text-sm">
         <div>
-          <p class="text-gray-500">전체</p>
-          <p id="totalCount" class="text-lg font-bold text-gray-700">0</p>
+          <p class="text-gray-500 dark:text-gray-400">전체</p>
+          <p id="totalCount" class="text-lg font-bold text-gray-700 dark:text-gray-200">0</p>
         </div>
         <div>
-          <p class="text-green-500">완료</p>
-          <p id="doneCount" class="text-lg font-bold text-green-500">0</p>
+          <p class="text-green-500 dark:text-green-400">완료</p>
+          <p id="doneCount" class="text-lg font-bold text-green-500 dark:text-green-400">0</p>
         </div>
         <div>
-          <p class="text-orange-400">미완료</p>
-          <p id="remainCount" class="text-lg font-bold text-orange-400">0</p>
+          <p class="text-orange-400 dark:text-orange-300">미완료</p>
+          <p id="remainCount" class="text-lg font-bold text-orange-400 dark:text-orange-300">0</p>
         </div>
       </div>
 
       <!-- 진행 바 -->
-      <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+      <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3 overflow-hidden">
         <div
           id="progressBar"
-          class="bg-blue-500 h-3 rounded-full transition-all duration-500"
+          class="bg-blue-500 dark:bg-blue-400 h-3 rounded-full transition-all duration-500"
           style="width: 0%"
         ></div>
       </div>
-      <p id="progressText" class="text-right text-xs text-gray-400">진행률: 0%</p>
+      <p id="progressText" class="text-right text-xs text-gray-400 dark:text-gray-500">진행률: 0%</p>
     </div>
 
   </div>

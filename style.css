@@ -13,7 +13,27 @@ input[type="checkbox"] {
   flex-shrink: 0;
 }
 
-/* 할 일 항목 호버 효과 */
+/* 할 일 항목 호버 효과 (라이트 모드) */
 .todo-item:hover {
   background-color: #f9fafb; /* gray-50 */
+}
+
+/* =============================================
+   🌙 다크모드 스타일
+   <html> 태그에 .dark 클래스가 있을 때 적용
+   ============================================= */
+
+/* 다크모드: 완료 항목 취소선 색상 */
+.dark .todo-done {
+  color: #6b7280; /* gray-500 */
+}
+
+/* 다크모드: 할 일 항목 호버 효과 */
+.dark .todo-item:hover {
+  background-color: #374151; /* gray-700 */
+}
+
+/* 다크모드: 체크박스 강조색 */
+.dark input[type="checkbox"] {
+  accent-color: #60a5fa; /* blue-400 */
 }
