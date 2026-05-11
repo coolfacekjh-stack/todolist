@@ -1,0 +1,19 @@
+/* 완료된 할 일 항목 텍스트 스타일 */
+.todo-done {
+  text-decoration: line-through;
+  color: #9ca3af; /* gray-400 */
+}
+
+/* 체크박스 커스텀 크기 */
+input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: #3b82f6; /* blue-500 */
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 할 일 항목 호버 효과 */
+.todo-item:hover {
+  background-color: #f9fafb; /* gray-50 */
+}

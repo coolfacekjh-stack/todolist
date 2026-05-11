@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Todo List</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-gray-100 min-h-screen flex items-start justify-center pt-16">
+
+  <div class="bg-white w-full max-w-md rounded-2xl shadow-lg p-6 flex flex-col gap-5">
+
+    <!-- 제목 -->
+    <h1 class="text-2xl font-bold text-center text-blue-600">📝 My Todo List</h1>
+
+    <!-- 입력 영역 -->
+    <div class="flex gap-2">
+      <input
+        id="todoInput"
+        type="text"
+        placeholder="할 일을 입력하세요..."
+        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+      <button
+        onclick="addTodo()"
+        class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+      >
+        + 추가
+      </button>
+    </div>
+
+    <!-- 할 일 목록 -->
+    <ul id="todoList" class="flex flex-col gap-2">
+      <!-- renderTodos()가 여기에 <li>를 삽입합니다 -->
+    </ul>
+
+    <!-- 빈 목록 안내 -->
+    <p id="emptyMsg" class="text-center text-gray-400 text-sm hidden">
+      아직 할 일이 없습니다. 위에서 추가해 보세요! 🙂
+    </p>
+
+    <!-- 구분선 -->
+    <hr class="border-gray-200" />
+
+    <!-- 상태 요약 영역 -->
+    <div id="statusSummary" class="flex flex-col gap-2">
+      <p class="text-sm font-semibold text-gray-600">📊 상태 요약</p>
+
+      <!-- 카운트 -->
+      <div class="flex justify-around text-center text-sm">
+        <div>
+          <p class="text-gray-500">전체</p>
+          <p id="totalCount" class="text-lg font-bold text-gray-700">0</p>
+        </div>
+        <div>
+          <p class="text-green-500">완료</p>
+          <p id="doneCount" class="text-lg font-bold text-green-500">0</p>
+        </div>
+        <div>
+          <p class="text-orange-400">미완료</p>
+          <p id="remainCount" class="text-lg font-bold text-orange-400">0</p>
+        </div>
+      </div>
+
+      <!-- 진행 바 -->
+      <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+        <div
+          id="progressBar"
+          class="bg-blue-500 h-3 rounded-full transition-all duration-500"
+          style="width: 0%"
+        ></div>
+      </div>
+      <p id="progressText" class="text-right text-xs text-gray-400">진행률: 0%</p>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

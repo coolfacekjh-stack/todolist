@@ -1,0 +1,246 @@
+// =============================================
+// 📦 데이터: 할 일 목록 배열
+// =============================================
+let todoItemList = []; // 전체 할 일 항목을 담는 배열
+
+
+// =============================================
+// 🔧 유틸리티 함수 (Utility Functions)
+// - DOM 요소를 가져오거나 입력값을 처리하는 작은 단위 함수들
+// =============================================
+
+/** 할 일 입력창 DOM 요소를 반환 */
+function getTodoInputElement() {
+  return document.getElementById("todoInput");
+}
+
+/** 입력창의 현재 텍스트 값을 반환 (앞뒤 공백 제거) */
+function getInputText() {
+  return getTodoInputElement().value.trim();
+}
+
+/** 입력창 텍스트를 비움 */
+function clearInputText() {
+  getTodoInputElement().value = "";
+}
+
+/** 입력창에 포커스를 이동 */
+function focusInputElement() {
+  getTodoInputElement().focus();
+}
+
+/** 고유 ID를 생성 (현재 밀리초 시간 활용) */
+function generateUniqueId() {
+  return Date.now();
+}
+
+/** 새 할 일 객체를 생성하여 반환 */
+function createTodoObject(todoText) {
+  return {
+    id:   generateUniqueId(), // 고유 ID
+    text: todoText,           // 할 일 내용
+    done: false               // 초기 완료 상태: 미완료
+  };
+}
+
+/** id로 일치하는 할 일 항목을 배열에서 찾아 반환 */
+function findTodoById(targetId) {
+  return todoItemList.find(function (todoItem) {
+    return todoItem.id === targetId;
+  });
+}
+
+
+// =============================================
+// 🖥️ DOM 조작 함수 (DOM Helper Functions)
+// - 화면 요소를 직접 변경하는 함수들
+// =============================================
+
+/** 할 일 목록 영역(ul)을 비움 */
+function clearTodoListElement() {
+  document.getElementById("todoList").innerHTML = "";
+}
+
+/** "할 일 없음" 안내 메시지를 화면에 표시 */
+function showEmptyMessage() {
+  document.getElementById("emptyMsg").classList.remove("hidden");
+}
+
+/** "할 일 없음" 안내 메시지를 화면에서 숨김 */
+function hideEmptyMessage() {
+  document.getElementById("emptyMsg").classList.add("hidden");
+}
+
+/** 단일 할 일 항목의 <li> DOM 요소를 생성하여 반환 */
+function createTodoListItem(todoItem) {
+  const listItemElement = document.createElement("li");
+  listItemElement.className =
+    "todo-item flex items-center gap-3 border border-gray-100 rounded-lg px-3 py-2 transition";
+
+  // 완료 여부에 따라 텍스트 스타일 클래스 결정
+  const textStyleClass = todoItem.done ? "todo-done" : "text-gray-700";
+
+  listItemElement.innerHTML = `
+    <input
+      type="checkbox"
+      ${todoItem.done ? "checked" : ""}
+      onchange="toggleTodo(${todoItem.id})"
+    />
+    <span class="flex-1 text-sm ${textStyleClass}">
+      ${todoItem.text}
+    </span>
+    <button
+      onclick="deleteTodo(${todoItem.id})"
+      class="text-red-400 hover:text-red-600 text-base transition"
+      title="삭제"
+    >
+      🗑
+    </button>
+  `;
+
+  return listItemElement;
+}
+
+/** 할 일 목록 <ul>에 모든 항목 <li>를 추가 */
+function appendAllTodoItems() {
+  const todoListElement = document.getElementById("todoList");
+
+  todoItemList.forEach(function (todoItem) {
+    const listItemElement = createTodoListItem(todoItem);
+    todoListElement.appendChild(listItemElement);
+  });
+}
+
+
+// =============================================
+// 📊 상태 계산 함수 (Count & Progress Functions)
+// - 카운트/진행률을 계산하고 화면에 반영하는 함수들
+// =============================================
+
+/** 완료된 할 일의 개수를 반환 */
+function countDoneTodos() {
+  return todoItemList.filter(function (todoItem) {
+    return todoItem.done === true;
+  }).length;
+}
+
+/** 진행률(%)을 계산하여 반환 (전체가 0이면 0 반환) */
+function calculateProgressPercent(totalCount, doneCount) {
+  if (totalCount === 0) return 0;
+  return Math.round((doneCount / totalCount) * 100);
+}
+
+/** 전체/완료/미완료 카운트 숫자를 화면에 반영 */
+function renderCountNumbers(totalCount, doneCount, remainCount) {
+  document.getElementById("totalCount").textContent  = totalCount;
+  document.getElementById("doneCount").textContent   = doneCount;
+  document.getElementById("remainCount").textContent = remainCount;
+}
+
+/** 진행률 바와 퍼센트 텍스트를 화면에 반영 */
+function renderProgressBar(progressPercent) {
+  document.getElementById("progressBar").style.width     = progressPercent + "%";
+  document.getElementById("progressText").textContent    = "진행률: " + progressPercent + "%";
+}
+
+
+// =============================================
+// 🎯 핵심 기능 함수 (Core Functions)
+// - 실제 Todo 앱의 주요 동작을 담당
+// =============================================
+
+/**
+ * ➕ addTodo
+ * 입력창의 텍스트를 읽어 새 할 일을 todoItemList에 추가하고 화면을 갱신
+ */
+function addTodo() {
+  const inputText = getInputText();
+
+  // 빈 값이면 추가 중단
+  if (inputText === "") {
+    alert("할 일을 입력해 주세요!");
+    focusInputElement();
+    return;
+  }
+
+  const newTodoItem = createTodoObject(inputText);
+  todoItemList.push(newTodoItem);
+
+  clearInputText();
+  focusInputElement();
+  renderTodos();
+}
+
+/**
+ * 🖥️ renderTodos
+ * todoItemList 배열을 기반으로 화면 목록 전체를 다시 그림
+ */
+function renderTodos() {
+  clearTodoListElement();
+
+  if (todoItemList.length === 0) {
+    showEmptyMessage();
+  } else {
+    hideEmptyMessage();
+    appendAllTodoItems();
+  }
+
+  updateCount();
+}
+
+/**
+ * ✅ toggleTodo
+ * 특정 id의 할 일 완료 상태(done)를 true ↔ false 로 전환하고 화면을 갱신
+ */
+function toggleTodo(targetId) {
+  todoItemList = todoItemList.map(function (todoItem) {
+    if (todoItem.id === targetId) {
+      return { ...todoItem, done: !todoItem.done }; // done 반전
+    }
+    return todoItem;
+  });
+
+  renderTodos();
+}
+
+/**
+ * 🗑️ deleteTodo
+ * 특정 id의 할 일을 todoItemList에서 제거하고 화면을 갱신
+ */
+function deleteTodo(targetId) {
+  todoItemList = todoItemList.filter(function (todoItem) {
+    return todoItem.id !== targetId; // 해당 id만 제외
+  });
+
+  renderTodos();
+}
+
+/**
+ * 📊 updateCount
+ * 전체/완료/미완료 카운트와 진행률을 계산하여 상태 요약 영역을 업데이트
+ */
+function updateCount() {
+  const totalCount    = todoItemList.length;
+  const doneCount     = countDoneTodos();
+  const remainCount   = totalCount - doneCount;
+  const progressPercent = calculateProgressPercent(totalCount, doneCount);
+
+  renderCountNumbers(totalCount, doneCount, remainCount);
+  renderProgressBar(progressPercent);
+}
+
+
+// =============================================
+// ⌨️ 이벤트 리스너: Enter 키로 할 일 추가 지원
+// =============================================
+getTodoInputElement().addEventListener("keydown", function (keyboardEvent) {
+  if (keyboardEvent.key === "Enter") {
+    addTodo();
+  }
+});
+
+
+// =============================================
+// 🚀 앱 초기 실행
+// =============================================
+renderTodos();
