@@ -3,6 +3,29 @@
 // =============================================
 let todoItemList = []; // 전체 할 일 항목을 담는 배열
 
+// localStorage에 사용할 키 이름 (상수)
+const STORAGE_KEY = "todoItemList";
+
+
+// =============================================
+// 💾 localStorage 함수 (Storage Functions)
+// - 데이터를 브라우저에 저장하고 불러오는 함수들
+// =============================================
+
+/** todoItemList 배열을 localStorage에 저장 */
+function saveTodoListToStorage() {
+  // 배열을 JSON 문자열로 변환하여 저장
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(todoItemList));
+}
+
+/** localStorage에서 할 일 목록을 불러와 todoItemList에 적용 */
+function loadTodoListFromStorage() {
+  const savedData = localStorage.getItem(STORAGE_KEY);
+
+  // 저장된 데이터가 있으면 JSON 파싱, 없으면 빈 배열 사용
+  todoItemList = savedData ? JSON.parse(savedData) : [];
+}
+
 
 // =============================================
 // 🔧 유틸리티 함수 (Utility Functions)
@@ -166,6 +189,7 @@ function addTodo() {
   const newTodoItem = createTodoObject(inputText);
   todoItemList.push(newTodoItem);
 
+  saveTodoListToStorage(); // 변경된 목록을 localStorage에 저장
   clearInputText();
   focusInputElement();
   renderTodos();
@@ -200,6 +224,7 @@ function toggleTodo(targetId) {
     return todoItem;
   });
 
+  saveTodoListToStorage(); // 변경된 목록을 localStorage에 저장
   renderTodos();
 }
 
@@ -212,6 +237,7 @@ function deleteTodo(targetId) {
     return todoItem.id !== targetId; // 해당 id만 제외
   });
 
+  saveTodoListToStorage(); // 변경된 목록을 localStorage에 저장
   renderTodos();
 }
 
@@ -241,6 +267,7 @@ getTodoInputElement().addEventListener("keydown", function (keyboardEvent) {
 
 
 // =============================================
-// 🚀 앱 초기 실행
+// 🚀 앱 초기 실행: localStorage에서 데이터 불러온 뒤 화면 렌더링
 // =============================================
-renderTodos();
+loadTodoListFromStorage(); // 저장된 할 일 목록 불러오기
+renderTodos();             // 화면에 출력
